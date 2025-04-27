@@ -37,8 +37,17 @@ function loadHabitablePlanets() {
 
 }
 
+function getAllPlanets() {
+    return habitablePlanets;
+}
+function getPlanetById(planetId) {
+    return habitablePlanets.find(planet => planet.kepler_name === planetId);
+}
+
 
 module.exports = {
+    getAllPlanets,
+    getPlanetById,
     loadHabitablePlanets,
-    planets: habitablePlanets
+    isHabitablePlanet
 }
