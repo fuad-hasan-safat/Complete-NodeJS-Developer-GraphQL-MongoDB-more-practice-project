@@ -1,5 +1,6 @@
 const express = require('express');
 const cluster = require('cluster');
+const os = require('os');
 
 const app = express();
 const PORT = 3000;
@@ -27,8 +28,10 @@ app.get('/timer', (req, res) => {
 
 if (cluster.isMaster) {
     console.log(`Master  is running`);
-    cluster.fork();
-    cluster.fork();
+    const NUM_WORKERS = os.cpus().length;
+    for (let i = 0; i < NUM_WORKERS; i++) {
+        cluster.fork();
+    }
 } else {
     console.log(`Worker started`);
     app.listen(PORT, () => {
