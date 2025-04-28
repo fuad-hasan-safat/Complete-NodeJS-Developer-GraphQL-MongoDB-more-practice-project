@@ -9,6 +9,7 @@
     "client": "pm start --prefix client",
     "watch": "npm run server & npm run client",
     "deploy": "npm run build --prefix client && npm start --prefix nodeserver",
+    "deploy-cluster": "npm run build --prefix client && npm run cluster --prefix nodeserver",
     "test": "npm run test --prefix nodeserver & npm run test --prefix client"
   },
   "keywords": [],
