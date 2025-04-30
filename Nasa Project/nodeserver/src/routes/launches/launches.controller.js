@@ -1,16 +1,14 @@
 const { 
-    addNewLaunch,
     getAllLaunches, 
-    abrotLaunchById
+    abrotLaunchById,
+    schudleNewLaunch,
+    existLaunchWithId,
 } = require("../../models/launches.model");
 
-async function existLaunchWithId(id){
-    return getAllLaunches().find(launch => launch.flightNumber === id);
-}
 
 async function httpgetAllLaunches(req, res) {
     try {
-        return res.status(200).json(getAllLaunches());
+        return res.status(200).json( await getAllLaunches());
     } catch (error) {
         console.error('Error fetching launches:', error);
         return res.status(500).json({ error: 'Failed to fetch launches' });
@@ -28,24 +26,26 @@ async function httpaddNewLaunch(req, res) {
     if (isNaN(launch.launchDate)) {
         return res.status(400).json({ error: 'Invalid launch date, date formate is January 14, 2030' });
     }
-    addNewLaunch(launch);
-    return res.status(201).json(launch);
+   const data = await schudleNewLaunch(launch);
+    return res.status(201).json(data);
 }
 
 async function httpAbortLaunch(req, res) {
     const launchId = Number(req.params.id);
-    if (!existLaunchWithId(launchId)) {
+    const existLaunch = await existLaunchWithId(launchId)
+    if (!existLaunch) {
         return res.status(400).json({ error: 'Invalid launch ID' });
     }
-    const aborted = abrotLaunchById(launchId);
+    const aborted = await abrotLaunchById(launchId);
     if (!aborted) {
-        return res.status(404).json({ error: 'Launch not found' });
+        return res.status(400).json({ error: 'Launch not aborted' });
     }
-    return res.status(200).json(aborted);
+    return res.status(200).json({
+        ok: true
+    });
 }
 
 module.exports = {
-    existLaunchWithId,
     httpgetAllLaunches,
     httpaddNewLaunch,
     httpAbortLaunch

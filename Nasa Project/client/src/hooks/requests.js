@@ -12,7 +12,7 @@ async function httpGetPlanets() {
 async function httpGetLaunches() {
   const response = await fetch(`${API_URL}/launches`);
   const data = await response.json();
-  console.log(data);
+  console.log("Launches data --> ",data);
   return data;
 }
 
