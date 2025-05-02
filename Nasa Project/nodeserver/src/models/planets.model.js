@@ -13,8 +13,8 @@ function isHabitablePlanet(planet) {
 }
 
 
-function loadHabitablePlanets() {
-    return new Promise((resolve, reject) => {
+async function loadHabitablePlanets() {
+    return new Promise(async (resolve, reject) => {
         fs.createReadStream(path.join(__dirname, '..', '..', 'data', 'kepler_data.csv'))
         .pipe(parse({
             comment: '#',
@@ -52,7 +52,10 @@ async function saveHabitablePlanet(planet) {
     }
 }
 async function  getAllPlanets() {
-    return await planets.find({});
+    return await planets.find({}, {
+        '_id': 0,
+        '__v': 0
+    });
 }
 function getPlanetById(planetId) {
     return habitablePlanets.find(planet => planet.kepler_name === planetId);
