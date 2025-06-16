@@ -1,100 +1,46 @@
 const express = require('express');
-const { buildSchema } = require('graphql');
+const path = require('path');
 const { graphqlHTTP } = require('express-graphql');
-// const schema = require('./schema');
+const { loadFilesSync } = require('@graphql-tools/load-files');
+const { makeExecutableSchema } = require('@graphql-tools/schema');
 
+const typesArray = loadFilesSync('**/*', {
+  extensions: ['graphql'],
+});
 
-const schema = buildSchema(
-    `
-    type Query {
-        products: [Product]
+const schema = makeExecutableSchema(
+    {
+        typeDefs: typesArray,
+        resolvers: {
+            Query: {
+                products: async (parent, args, context, info) => {
+                    console.log('Fetching products');
+                    const product = await Promise.resolve( parent.products);
+                    return product;
+                },
+                orders: async (parent, args, context, info) => {
+                    console.log('Fetching orders');
+                    const orders = await Promise.resolve( parent.orders);
+                    return orders;
+                },
+            }
+
+        },
     }
-
-    type Product {
-        id: ID!
-        price: Float!
-        review: [Review]
-        description: String!
-    }
-
-    type Review {
-        rating: Int!
-        text: String
-    }
-
-    type Order {
-        date: String!
-        subtotal: Float!
-        items: [OrderItem]
-    }
-
-    type OrderItem {
-        product: Product!
-        quantity: Int!
-    }
-    `
 )
-// Create an express instance serving all methods on `/graphql`
-// where the GraphQL over HTTP express request handler is
-const root = {
-    products: [
-        {
-            id: 'redshoe',
-            price: 100,
-            description: 'Good',
-            review: [{ rating: 5, text: 'Good' }]
-        },
-        {
-            id: 'blueshoe',
-            price: 200,
-            description: 'Good',
-            review: [{ rating: 4, text: 'Good' }]
-        },
-        {
-            id: 'greenshoe',
-            price: 300,
-            description: 'Good',
-            review: [{ rating: 3, text: 'Good' }]
-        },
-        {
-            id: 'whiteshoe',
-            price: 400,
-            description: 'Good',
-            review: [{ rating: 2, text: 'Good' }]
-        },
-        {
-            id: 'blackshoe',
-            price: 500,
-            description: 'Good',
-            review: [{ rating: 1, text: 'Good' }]
-        },
-    ],
 
-    orders: [
-        {
-            date: '2020-01-01',
-            subtotal: 100,
-            items: [
-                {
-                    product: {
-                        id: 'redshoe',
-                        price: 100,
-                        description: 'Good',
-                        // review: [{ rating: 5, text: 'Good' }]
-                    },
-                    quantity: 1
-                }
-            ]
-        }
-    ]
+const root = {
+    products: require('./products/products.model'),
+
+    orders: require('./orders/orders.model'),
 }
 
 const app = express();
 
 
 app.use('/graphql', graphqlHTTP({
-    schema: schema, // GraphQL schema
-    rootValue: root, // root value
+    schema: schema, 
+    rootValue: root, 
     graphiql: true,
 }));
 
