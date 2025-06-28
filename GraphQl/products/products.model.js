@@ -36,7 +36,28 @@ function getAllProducts() {
     return products;
 }
 
+function getProductsByPrice(min, max) {
+    return products.filter(product => product.price >= min && product.price <= max);
+}
+
+function getProductById(id) {
+    return products.find(product => product.id === id);
+}
+
+function addNewProduct(id, price, description) {
+    const newProduct = {
+        id,
+        price,
+        description,
+        review: []
+    };
+    products.push(newProduct);
+    return newProduct;
+}
+
 module.exports = {
     getAllProducts,
-    products
+    getProductsByPrice,
+    getProductById,
+    addNewProduct
 };
