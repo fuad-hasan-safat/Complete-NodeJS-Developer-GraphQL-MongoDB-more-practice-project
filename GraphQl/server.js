@@ -8,39 +8,24 @@ const typesArray = loadFilesSync('**/*', {
   extensions: ['graphql'],
 });
 
+const resolversArray = loadFilesSync('**/*resolver.{js,ts}', {
+  extensions: ['js', 'ts'],
+  ignore: ['**/index.js', '**/index.ts'],
+});
+
 const schema = makeExecutableSchema(
     {
         typeDefs: typesArray,
-        resolvers: {
-            Query: {
-                products: async (parent, args, context, info) => {
-                    console.log('Fetching products');
-                    const product = await Promise.resolve( parent.products);
-                    return product;
-                },
-                orders: async (parent, args, context, info) => {
-                    console.log('Fetching orders');
-                    const orders = await Promise.resolve( parent.orders);
-                    return orders;
-                },
-            }
-
-        },
+        resolvers: resolversArray,
     }
 )
 
-const root = {
-    products: require('./products/products.model'),
-
-    orders: require('./orders/orders.model'),
-}
 
 const app = express();
 
 
 app.use('/graphql', graphqlHTTP({
     schema: schema, 
-    rootValue: root, 
     graphiql: true,
 }));
 
