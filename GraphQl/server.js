@@ -20,15 +20,12 @@ function startAppiliServer() {
   {
     typeDefs: typesArray,
     resolvers: resolversArray,
-  }
-)
+  });
+
+  const server = new ApolloServer({})
 }
 
 
-app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  graphiql: true,
-}));
 
 app.listen({ port: 4000 });
 console.log('GraphQL Server Listening to port 4000');
