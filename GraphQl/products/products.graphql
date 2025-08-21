@@ -1,4 +1,4 @@
-      type Query {
+    type Query {
         products: [Product]
         productsByPrice(min: Float!, max: Float!): [Product]
         product(id: ID!): Product
