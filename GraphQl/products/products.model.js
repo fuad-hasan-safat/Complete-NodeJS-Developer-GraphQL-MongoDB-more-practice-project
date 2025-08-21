@@ -55,9 +55,22 @@ function addNewProduct(id, price, description) {
     return newProduct;
 }
 
+function addNewProductReview(id, rating, text){
+    const product = getProductById(id);
+    if (!product) {
+        throw new Error(`Product with id ${id} not found`);
+    }
+    
+    const newReview = { rating, text };
+    product.review.push(newReview);
+    
+    return product;
+}
+
 module.exports = {
     getAllProducts,
     getProductsByPrice,
     getProductById,
-    addNewProduct
+    addNewProduct,
+    addNewProductReview
 };

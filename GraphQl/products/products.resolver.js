@@ -1,4 +1,4 @@
-const { getAllProducts, getProductsByPrice, getProductById, addNewProduct } = require("./products.model")
+const { getAllProducts, getProductsByPrice, getProductById, addNewProduct, addNewProductReview } = require("./products.model")
 
 module.exports = {
     Query : {
@@ -22,6 +22,9 @@ module.exports = {
             };
           
             return addNewProduct(newProduct.id, newProduct.price, newProduct.description);
+        },
+        addProductReview(_, args) {
+            return addNewProductReview(args.id, args.rating, args.text);
         }
     }
 }
