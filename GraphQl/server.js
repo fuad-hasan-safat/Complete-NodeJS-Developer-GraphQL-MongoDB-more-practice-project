@@ -13,7 +13,7 @@ const resolversArray = loadFilesSync('**/*resolver.{js,ts}', {
   ignore: ['**/index.js', '**/index.ts'],
 });
 
-function startAppiliServer() {
+async function startAppiliServer() {
   const app = express();
 
   const schema = makeExecutableSchema(
@@ -22,10 +22,18 @@ function startAppiliServer() {
     resolvers: resolversArray,
   });
 
-  const server = new ApolloServer({})
+  const server = new ApolloServer({
+    schema
+  });
+
+  await server.start();
+  server.applyMiddleware({
+    app, path: '/graphql'
+  })
+
+  app.listen(3000, ()=>{
+     console.log('Runninh graphql server....')
+  });
 }
 
-
-
-app.listen({ port: 4000 });
-console.log('GraphQL Server Listening to port 4000');
+startAppiliServer();
